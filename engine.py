@@ -8,8 +8,8 @@ import json # need to learn json
 
 
 nm = nmap.PortScanner()
-nm.scan('10.21.0.6/32', '53') #testing functionality
-print json.dumps({'4': 5, '6': 7}, indent=2,  separators=(',',':'))
+nm.scan('10.21.0.0/24', '22') #testing functionality
+#print json.dumps({'4': 5, '6': 7}, indent=2,  separators=(',',':'))
 
 
 print(nm.scaninfo())
