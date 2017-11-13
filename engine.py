@@ -4,6 +4,7 @@
 #this way i can figure out how much encryption is on the network.  
 
 import nmap #need to install python-nmap via PIP
+
 import json # need to learn json 
 
 
@@ -14,3 +15,4 @@ nm.scan('10.21.0.0/24', '22') #testing functionality
 
 print(nm.scaninfo())
 print(nm.all_hosts())
+
