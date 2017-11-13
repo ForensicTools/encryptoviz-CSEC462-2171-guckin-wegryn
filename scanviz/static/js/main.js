@@ -26,15 +26,15 @@ function post_subnet(subnet){
 	});
 };
 
-#
-#GREG CODE HERE
-#
+//
+//GREG CODE HERE
+//
 function D3JS(response) {
 	console.log(response)
 }
-#
-#NOT HERE
-#
+//
+//NOT HERE
+//
 
 
 function getCookie(name) {

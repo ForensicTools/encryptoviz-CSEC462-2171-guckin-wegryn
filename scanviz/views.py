@@ -6,7 +6,7 @@ from engine import scan
 # Create your views here.
 def index(request):
 	if request.POST:
-		grinder = request.POST["subnet"]
+		grinder = request.POST.get("subnet")
 		return JsonResponse(scan(grinder))
 	else:
 		return HttpResponse(loader.get_template("scanviz/index.html").render(request=request))
