@@ -5,9 +5,14 @@
 
 import nmap #need to install python-nmap via PIP
 
+import json # need to learn json 
+
+
 nm = nmap.PortScanner()
-nm.scan('10.0.0.1', '22') #testing functionality
-nm.command_line() 'nmap -n -p 22-sV 10.0.0.1'
+nm.scan('10.21.0.0/24', '22') #testing functionality
+#print json.dumps({'4': 5, '6': 7}, indent=2,  separators=(',',':'))
+
 
 print(nm.scaninfo())
 print(nm.all_hosts())
+
