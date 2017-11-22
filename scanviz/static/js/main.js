@@ -21,20 +21,120 @@ function post_subnet(subnet){
 			}
 		},
 		success: function(response) {
-			D3JS(response)
+			charts(response)
+			graph(response)
 		}
 	});
 };
 
 //
-//GREG CODE HERE
+//This function is used to render the port charts
 //
-function D3JS(response) {
-	console.log(response)
+function charts(response) { 
+	console.log(response); // for tesing
+	response = JSON.parse(response)
+	for(var port in response["port_data"]) {  //move through port data
+		$("#port_graphs").append( // used to display port number
+			'<div class="port_graph"><canvas id="port_' + port + '"></canvas><span>' + port + '</span></div>');
+		var ctx = document.getElementById('port_' + port).getContext("2d") //create doughnut
+		ctx.width = 235 //set position of doughnut
+		ctx.height = 235
+		new Chart(ctx, {
+			type : "doughnut",
+			data : {
+				datasets : [{
+					data : response["port_data"][port],
+					backgroundColor : [
+						"rgb(255, 99, 132)", //red
+						"rgb(201, 203, 207)", //grey
+						"rgb(75, 192, 192)" //green
+					]
+				}],
+				labels : [
+					"open",
+					"filtered",
+					"closed"
+				]
+			},
+			options : {
+				responsive : false,
+				maintainAspectRatio: false,
+				legend : { display : false },
+				animation : {
+					animateScale : true,
+					animateRotate : true
+				}
+			}
+		})
+	} // for loop
 }
+
+
 //
-//NOT HERE
 //
+//
+function graph(response) {
+	response = JSON.parse(response)
+// Add a method to the graph model that returns an
+    // object with every neighbors of a node inside:
+    sigma.classes.graph.addMethod('neighbors', function(nodeId) {
+        var k, neighbors = {}, index = this.allNeighborsIndex[nodeId] || {};
+        for (k in index) neighbors[k] = this.nodesIndex[k];
+        return neighbors;
+    });
+	map = new sigma({
+		container : "network_map",
+		graph : response["map_data"],
+		settings : { defaultNodeColor: "#ec5148" }
+	})
+// We first need to save the original colors of our
+            // nodes and edges, like this:
+            map.graph.nodes().forEach(function(n) { n.originalColor = n.color; });
+            map.graph.edges().forEach(function(e) { e.originalColor = e.color; });
+            
+            // When a node is clicked, we highlight all of it's immediate neighbors
+            map.bind('clickNode', function(e) {
+                var nodeId = e.data.node.id, 
+                    toKeep = map.graph.neighbors(nodeId);
+                toKeep[nodeId] = e.data.node;
+                
+                map.graph.nodes().forEach(function(n) {
+                    if (toKeep[n.id]) n.color = n.originalColor;
+                    else n.color = '#eee';
+                });
+                map.graph.edges().forEach(function(e) {
+                    if (toKeep[e.source] && toKeep[e.target]) e.color = e.originalColor;
+                    else e.color = '#eee';
+                });
+                map.refresh();
+            });
+
+            // When the stage is clicked, set everything back
+            map.bind('clickStage', function(e) {
+                map.graph.nodes().forEach(function(n) {
+                    n.color = n.originalColor;
+                });
+                map.graph.edges().forEach(function(e) {
+                    e.color = e.originalColor;
+                });
+                map.refresh();
+            });
+
+	force_atlas(map)
+}// end of function
+
+function force_atlas(sigInstance){
+    var nodes = sigInstance.graph.nodes(), len = nodes.length;
+    for (var i = 0; i < len; i++) {
+        nodes[i].x = Math.random();
+        nodes[i].y = Math.random();
+    }
+    // Refresh the display:
+    sigInstance.refresh();
+    // ForceAtlas Layout
+    sigInstance.startForceAtlas2({startingIterations : 5});//start but dont recurse
+	sigInstance.stopForceAtlas2()
+}
 
 
 function getCookie(name) {
